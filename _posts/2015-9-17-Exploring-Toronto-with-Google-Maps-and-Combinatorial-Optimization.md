@@ -1,13 +1,14 @@
 ---
 layout: post
 title: Exploring Toronto with Google Maps and Combinatorial Optimization
+tags: google-maps, optimization, python
 ---
 
-As the 5th largest city in North America, Toronto is a vibrant and colourful metropolis. Visiting Toronto is exciting but challenging. The city offers thousands of restaurants, hundreds of museums and galleries, and many other attractions. We will be using the google maps API and combinatorial optimization to find the optimal itinerary to visit Toronto's most famous attractions.
+As the 5th largest city in North America, Toronto is a vibrant and colourful metropolis with many attractions to offer. Visiting as many as possible is a challenging task to any visitor and requires the best use of their time.  In this post we will use the google maps API and combinatorial optimization to find the optimal itinerary to visit Toronto's most famous attractions.
 
-<a title="By Rob Sinclair (Toronto by night  Uploaded by Skeezix1000) [CC BY-SA 2.0 (http://creativecommons.org/licenses/by-sa/2.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ANight_skyline_of_Toronto_May_2009.jpg"><img width="800" alt="Night skyline of Toronto May 2009" src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Night_skyline_of_Toronto_May_2009.jpg"/></a>
+![CN-tower](http://i.imgur.com/K53dCRu.jpg?1 "CN Tower source:https://www.flickr.com/photos/cityoftoronto/9841374213")
 
-A good starting point is this [list](http://www.planetware.com/tourist-attractions-/toronto-cdn-on-ont.htm) of the 15 top-rated attractions:
+A good suggestion of the top attractions in Toronto is this [list](http://www.planetware.com/tourist-attractions-/toronto-cdn-on-ont.htm) from Planet Ware:
 
 * CN Tower
 * Royal Ontario Museum
@@ -25,19 +26,19 @@ A good starting point is this [list](http://www.planetware.com/tourist-attractio
 * Ontario Science Centre
 * Toronto Islands
 
-Lets say you have five days to visit these attractions. Now the task is to find the itinerary for each day with minimum travel time so you can spend more time enjoying them. This is a difficult task because first you need to find the travel time to each destination and then you need to find the best route among all the combinations. Part of the code in this post is taken from [Randal Olson's](http://www.randalolson.com/2015/03/08/computing-the-optimal-road-trip-across-the-u-s/) article about finding the optimal trip accross the U.S.
+Lets say we have five days to visit these 15 attractions. If we want to optimize our time we need to find an itinerary with minimum travel time. This is a difficult task because first we need to find the distance to each destination and then we need to find the best route among all of the possible combinations. Part of the code in this post is taken from [Randal Olson's](http://www.randalolson.com/2015/03/08/computing-the-optimal-road-trip-across-the-u-s/) article about finding the optimal trip accross the U.S.
 
 ## Finding the best five-day itinerary in Toronto
 
-Adding to the list of 15 destinations we also need to consider another point of interest: the place where you will be staying while in the city. For now lets consider this a popular hotel downtown. The hotel will function as a base where you will start and end your journey every day. 
+First we need to add another point of interest: the hotel where we will be staying during our visit. The hotel will function as a start and end point for our daily schedules. 
 
-The next step is to find the travel times between all of our 16 destinations. Probably you have used Google Maps before to find directions and travel times between two addresses. We can do the same for all the possible pairs of destinations, however doing this by hand would be a tremendous task. Thankfully with the help of the [Google Maps API](https://developers.google.com/maps/documentation/distance-matrix/intro) we can compute these distances with a short Python script. To make things simpler, we assume that the travel time from point A to point B is the same as travelling from point B to point A. In other words we are dealing with an [undirected graph][undirected-graph]. With this consideration, we only need to calculate 16<sup>2</sup>/2 - 16 = 112 travel times.
+In order to find the best itinerary we need the travel times between all of our 16 destinations. Google Maps is a great tool for that. We can get travel times for all of the possible pairs of destinations, however doing this by hand would be a tremendous task. Thankfully with the help of the [Google Maps API](https://developers.google.com/maps/documentation/distance-matrix/intro) we can compute these distances with a short Python script. To make things simpler, we assume that the travel time from point A to point B is the same as travelling from point B to point A. In other words we are dealing with an [undirected graph][undirected-graph]. With this consideration, we only need to calculate 16<sup>2</sup>/2 - 16 = 112 travel times. We also assume we are traveling by car - although we can change that.
 
-We want to know which attractions to visit each day and in what order with the objective of minimizing the total travel time. Several considerations need to be made. Besides travel times we should consider the time we will be spending at each attraction. Some attractions will require more time than other so our algorithm should take that into account when computing our daily itineraries. Speaking of that, we want to make sure we limit the available time each day or we would end up with crazy itineraries that require more hours than the day has. Most attractions open in the late morning and close in the afternoon so in practical terms we have a few hours available each day. I set up this limit to 8 hours per day.
+We should also consider the leisure time at each attraction. We'll add these times to the total travel times for each attraction. We also want to limit the available time each day or we would end up with itineraries that require more hours than the day has. Most attractions open in the late morning and close in the afternoon so in practical terms we have a few hours available each day. I set up this limit to 8 hours per day.
 
 This problem looks very similar to the vehicle routing problem ([VRP](https://en.wikipedia.org/wiki/Vehicle_routing_problem)), a classic in combinatorial optimization. In the vehicle routing problem a set of clients has to be visited by a fleet of vehicles traveling from a common depot. The objective is to find the optimal route for each vehicle. In our case we can assume that we have five vehicles representing our five vacation days. Our depot is our hotel and our clients are our 15 attractions. We also have constraints for our route lengths which makes it a distance-constrained capacitated vehicle problem (DCVRP).
 
-The vehicle routing problem is a generalization of the travelling salesman problem, which is an NP-hard problem. This just means that while there are exact algorithms that can find optimal solutions, their computation time increases polinomially with the size of the problem. Even with modern computers, finding the optimal solution of a routing problem with more than 15 instances will take more than a life time. If we can't find the optimal solution maybe we can find a good-enough solution. We turn to heuristic and approximation algorithms that yield good solutions to large problems in reasonable time.
+The vehicle routing problem is a generalization of the [travelling salesman problem](https://en.wikipedia.org/wiki/Vehicle_routing_problem), which is an [NP-hard problem](https://en.wikipedia.org/wiki/NP-hardness). This means that while there are exact algorithms that can find optimal solutions, their computation time increases polinomially with the size of the problem. Even with modern computers, finding the optimal solution of a routing problem with more than 15 instances will take more than a life time. If we can't find the optimal solution maybe we can find a good-enough solution. We turn to heuristic and approximation algorithms that yield good solutions to large problems in reasonable time.
 
 There are several libraries that implement exact and approximation algorithms for optimization. I use [or-tools](https://developers.google.com/optimization/), Google's suite for combinatorial optimization. Or-tools is open-source and actively maintained. Conveniently it includes a routing library.
 
@@ -85,11 +86,11 @@ Take a look at the map with the routes. You can toggle each day's route in the m
 
 ### Considerations
 
-We obtained a reasonable solution with at most 7.2 hrs of daily activities. Enough to explore the city during the day and relax in the evening. With some luck you could probably find a better solution. That's ok. Remember our objective was to find a good enough solution quickly. Having said that, there are some other considerations:
+We obtained a reasonable solution with at most 7.2 hrs of daily activities. Enough time to explore the city during the day and relax in the evening. There is no guarantee this is the best solution achievable. With some luck you could probably find a better solution. That's ok. Remember our objective was to find a good enough solution quickly. Having said that, there are some other considerations:
 
 * The travel times depend on the time and day you run the script. This is because `gmaps.distance_matrix()` returns the durations at the time it was called. So if you run the script on your own you might get a different distance matrix. 
-* Our model assumes all our attractions will be open during our available time. This might not be true for attractions that close during some days or have short opening hours so a final sanity check is a good idea. We can always change the order of our daily itineraries to move around this.
-* Our model doesn't explicitly consider times for other activities such as finding parking and eating. These should be part of the time allocated to each attraction.
+* We assume all of our attractions will be open during our trip. This might not be true for attractions that close during some days or have short opening hours so a final sanity check is a good idea. We can always change the order of our daily itineraries to move around this.
+* We don't consider times for other activities such as finding parking and eating. These should be part of the time allocated to each attraction.
 
 [undirected-graph]: https://en.wikipedia.org/wiki/Graph_(mathematics)#Undirected_graph
 [local-search]: https://en.wikipedia.org/wiki/Local_search_(optimization)

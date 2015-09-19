@@ -26,7 +26,7 @@ A good suggestion of the top attractions in Toronto is this [list](http://www.pl
 * Ontario Science Centre
 * Toronto Islands
 
-Lets say we have five days to visit these 15 attractions. If we want to optimize our time we need to find an itinerary with minimum travel time. This is a difficult task because first we need to find the distance to each destination and then we need to find the best route among all of the possible combinations. Part of the code in this post is taken from [Randal Olson's](http://www.randalolson.com/2015/03/08/computing-the-optimal-road-trip-across-the-u-s/) article about finding the optimal trip accross the U.S.
+Lets say we have five days to visit these 15 attractions. If we want to optimize our time we need to find an itinerary with minimum travel time. This is a difficult task because first we need to find the distance to each destination and then we need to find the best route among all of the possible combinations. 
 
 ## Finding the best five-day itinerary in Toronto
 
@@ -94,4 +94,8 @@ We obtained a reasonable solution with at most 7.2 hrs of daily activities. Enou
 
 [undirected-graph]: https://en.wikipedia.org/wiki/Graph_(mathematics)#Undirected_graph
 [local-search]: https://en.wikipedia.org/wiki/Local_search_(optimization)
+
+### Building your own
+
+You can find the code used in this post in [this ipython notebook](https://github.com/riosv/Code-for-blog-posts/blob/master/Toronto-attractions.ipynb). Part of the code is taken from [Randal Olson's](http://www.randalolson.com/2015/03/08/computing-the-optimal-road-trip-across-the-u-s/) article about finding the optimal trip accross the U.S. You can build your own itinerary by defining your own points of interest and visiting times. You might as well change the mode of transportation. Finally you are not restricted to traveling within a city. You can use this model for any set of points for which you can get directions from Google Maps.
 

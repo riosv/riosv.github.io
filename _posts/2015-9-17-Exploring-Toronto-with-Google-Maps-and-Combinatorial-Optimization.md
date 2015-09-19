@@ -2,6 +2,7 @@
 layout: post
 title: Exploring Toronto with Google Maps and Combinatorial Optimization
 tags: google-maps, optimization, python
+comments: true
 ---
 
 As the 5th largest city in North America, Toronto is a vibrant and colourful metropolis with many attractions to offer. Visiting as many as possible is a challenging task to any visitor and requires the best use of their time.  In this post we will use the google maps API and combinatorial optimization to find the optimal itinerary to visit Toronto's most famous attractions.

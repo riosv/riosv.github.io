@@ -4,12 +4,10 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+Data monkey [@TELUS](http://www.telus.com/)
 
-### More Information
-
-A place to include any other types of information that you'd like to include about yourself.
+MM in Operations Research [@UBC](http://www.sauder.ubc.ca/Faculty/Research_Centres/Centre_for_Operations_Excellence/Master_of_Management_in_Operations_Research)
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+[victor.riosgut@gmail.com](mailto:victor.riosgut@gmail.com)
